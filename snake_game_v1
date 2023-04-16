@@ -1,0 +1,335 @@
+import sys
+import random
+import OpenGL.GL as gl
+import OpenGL.GLUT as glut
+
+
+def find_zone(x1, y1, x2, y2):
+    dx = x2 - x1
+    dy = y2 - y1
+    absolute_dy = abs(dy)
+    absolute_dx = abs(dx)
+    if absolute_dx > absolute_dy:
+        if dx >= 0 and dy >= 0:
+            return 0
+        elif dx <= 0 <= dy:
+            return 3
+        elif dx <= 0 and dy <= 0:
+            return 4
+        elif dx >= 0 >= dy:
+            return 7
+    else:
+        if dx >= 0 and dy >= 0:
+            return 1
+        elif dx <= 0 <= dy:
+            return 2
+        elif dx <= 0 and dy <= 0:
+            return 5
+        elif dx >= 0 >= dy:
+            return 6
+
+
+def convert_to_zone_zero(x, y, zone):
+    if zone == 0:  # Zone 0 to Zone 0
+        return x, y
+    elif zone == 1:  # Zone 1 to Zone 0
+        return y, x
+    elif zone == 2:  # Zone 2 to Zone 0
+        return y, -x
+    elif zone == 3:  # Zone 3 to Zone 0
+        return -x, y
+    elif zone == 4:  # Zone 4 to Zone 0
+        return -x, -y
+    elif zone == 5:  # Zone 5 to Zone 0
+        return -y, -x
+    elif zone == 6:  # Zone 6 to Zone 0
+        return -y, x
+    elif zone == 7:  # Zone 7 to Zone 0
+        return x, -y
+
+
+def convert_back(x, y, zone):
+    if zone == 0:  # zone 0 to zone 0
+        return x, y
+    elif zone == 1:  # zone 0 to zone 1
+        return y, x  # X0 = y , Y0= x
+    elif zone == 2:  # zone 0 to zone 2
+        return -y, x
+    elif zone == 3:  # zone 0 to zone 3
+        return -x, y
+    elif zone == 4:  # zone 0 to zone 4
+        return -x, -y
+    elif zone == 5:  # zone 0 to zone 5
+        return -y, -x
+    elif zone == 6:  # zone 0 to zone 6
+        return y, -x
+    elif zone == 7:  # zone 0 to zone 7
+        return x, -y
+
+
+def midpoint_line(x1, y1, x2, y2):
+    zone = find_zone(x1, y1, x2, y2)
+    x1_new, y1_new = convert_to_zone_zero(x1, y1, zone)
+    x2_new, y2_new = convert_to_zone_zero(x2, y2, zone)
+
+    dx = x2_new - x1_new
+    dy = y2_new - y1_new
+    d = 2 * dy - dx
+    ne = 2 * (dy - dx)
+    e = 2 * dy
+
+    while x1_new < x2_new:
+        x1_new += 1
+        if d < 0:
+            d += e
+        else:
+            y1_new += 1
+            d += ne
+        temp_x, temp_y = convert_back(x1_new, y1_new, zone)
+        gl.glVertex2f(temp_x, temp_y)
+
+
+# Midpoint Circle Algorithm
+def midpoint_circle(cx, cy, r):
+    x, y, d = 0, r, 1 - r
+    while x <= y:
+        gl.glVertex2f(cx + x, cy + y)
+        gl.glVertex2f(cx - x, cy + y)
+        gl.glVertex2f(cx + x, cy - y)
+        gl.glVertex2f(cx - x, cy - y)
+        gl.glVertex2f(cx + y, cy + x)
+        gl.glVertex2f(cx - y, cy + x)
+        gl.glVertex2f(cx + y, cy - x)
+        gl.glVertex2f(cx - y, cy - x)
+
+        if d < 0:
+            d += 2 * x + 3
+        else:
+            d += 2 * (x - y) + 5
+            y -= 1
+        x += 1
+
+
+# Draw  square
+def draw_square(x, y, size):
+    half_size = size // 2
+    # Draw the square using the midpoint_line function
+    # Top edge
+    midpoint_line(x - half_size, y + half_size, x + half_size, y + half_size)
+    # Bottom edge
+    midpoint_line(x - half_size, y - half_size, x + half_size, y - half_size)
+    # Left edge
+    midpoint_line(x - half_size, y - half_size, x - half_size, y + half_size)
+    # Right edge
+    midpoint_line(x + half_size, y - half_size, x + half_size, y + half_size)
+    # Fill the square
+    for i in range(x - half_size, x + half_size):
+        midpoint_line(i, y - half_size, i, y + half_size)
+
+
+# Check border collision
+def check_border_collision(x, y, size):
+    half_size = size // 2
+    if x - half_size <= 0 or x + half_size >= 500 or y - half_size <= 0 or y + half_size >= 500:
+        return True
+    return False
+
+
+# Add Color
+def add_color(r, g, b):
+    gl.glColor3f(r / 255, g / 255, b / 255)
+
+
+# Draw text on the screen
+def draw_text(text, x, y):
+    gl.glPushMatrix()
+    gl.glTranslatef(x, y, 0)
+    # increase spacing between characters
+    gl.glScalef(0.2, 0.2, 0.2)
+    for ch in text:
+        # Draw each character using the arial font
+        glut.glutStrokeCharacter(glut.GLUT_STROKE_MONO_ROMAN, ord(ch))
+
+    gl.glPopMatrix()
+
+
+# Draw game over text on the screen
+def draw_game_over(text, x, y):
+    gl.glPushMatrix()
+    gl.glTranslatef(x, y, 0)
+    gl.glScalef(0.5, 0.5, 0.5)
+
+    for ch in text[0]:
+        glut.glutStrokeCharacter(glut.GLUT_STROKE_ROMAN, ord(ch))
+
+    gl.glPopMatrix()
+    gl.glPushMatrix()
+    gl.glScalef(0.4, 0.4, 0.4)
+    # Move to the next line and draw the score text below the game over text
+    gl.glTranslatef(100, 450, 0)
+    for ch in text[1]:
+        glut.glutStrokeCharacter(glut.GLUT_STROKE_ROMAN, ord(ch))
+
+    gl.glPopMatrix()
+
+
+# Draw the snake
+def draw_snake(snake):
+    for segment in snake:
+        x, y = segment
+        draw_square(x * 10 + 5, y * 10 + 5, 10)
+        # midpoint_circle(x * 10 + 5, y * 10 + 5, 6)
+
+
+# Draw the food
+def draw_food(food, food_type):
+    x, y = food
+    if food_type == "circle":
+        midpoint_circle(x * 10 + 5, y * 10 + 5, 5)
+    elif food_type == "square":
+        draw_square(x * 10 + 5, y * 10 + 5, 10)
+
+
+# Game state
+
+snake = [(20, 20), (20, 21), (20, 22)]
+food = (40, 40)
+food_type = random.choice(["circle", "square"])
+direction = (1, 0)
+score = 0
+game_over = False
+speed_multiplier = 1
+
+
+# OpenGL display function
+def display():
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+
+    if not game_over:
+
+        # Draw the snake
+        add_color(14, 124, 227)
+        gl.glBegin(gl.GL_POINTS)
+        draw_snake(snake)
+        gl.glEnd()
+
+        # Draw the food
+        add_color(227, 31, 14)
+        gl.glBegin(gl.GL_POINTS)
+        draw_food(food, food_type)
+        gl.glEnd()
+
+        # Display score
+        add_color(149, 14, 227)
+        gl.glLineWidth(4)
+        draw_text(f"Score: {score}", 5, 470)
+
+    else:
+        add_color(227, 14, 14)
+        gl.glLineWidth(4)
+        gmv = "Your Score: " + str(score)
+        draw_game_over(["Game Over!", gmv], 50, 350)
+        glut.glutTimerFunc(2000, update, 0)
+
+    glut.glutSwapBuffers()
+
+
+# Game update function
+def update(value):
+    global snake, food, food_type, direction, score, game_over, speed_multiplier
+
+    if not game_over:
+        gl.glClearColor(0.720, 0.955, 0.150, 1.0)
+        head_x, head_y = snake[-1]
+        new_head_x = (head_x + direction[0])
+        new_head_y = (head_y + direction[1])
+
+        if (new_head_x, new_head_y) in snake:
+            game_over = True
+            glut.glutPostRedisplay()
+            return
+
+        if check_border_collision(new_head_x * 10 + 5, new_head_y * 10 + 5, 5):
+            game_over = True
+            glut.glutPostRedisplay()
+            return
+
+        elif (new_head_x, new_head_y) == food:
+            if food_type == "square":
+                score += 30
+                speed_multiplier += 0.5
+            else:
+                score += 10
+            food = (random.randint(0, 49), random.randint(0, 49))
+            food_type = random.choice(["circle", "square"])
+        else:
+            snake.pop(0)
+
+        snake.append((new_head_x, new_head_y))
+
+        glut.glutPostRedisplay()
+        glut.glutTimerFunc(int(200/speed_multiplier), update, 0)
+
+    else:
+        # close the game and exit
+        glut.glutDestroyWindow(glut.glutGetWindow())
+        sys.exit()
+
+
+# Keyboard input function
+def keyboard(key, x, y):
+    global direction
+    if key == b"w":
+        if direction[1] == 0:
+            direction = (0, 1)
+    elif key == b"s":
+        if direction[1] == 0:
+            direction = (0, -1)
+    elif key == b"a":
+        if direction[0] == 0:
+            direction = (-1, 0)
+    elif key == b"d":
+        if direction[0] == 0:
+            direction = (1, 0)
+
+
+# Arrow keys input function
+def arrow_keys(key, x, y):
+    global direction
+    if key == glut.GLUT_KEY_UP:
+        if direction[1] == 0:
+            direction = (0, 1)
+    elif key == glut.GLUT_KEY_DOWN:
+        if direction[1] == 0:
+            direction = (0, -1)
+    elif key == glut.GLUT_KEY_LEFT:
+        if direction[0] == 0:
+            direction = (-1, 0)
+    elif key == glut.GLUT_KEY_RIGHT:
+        if direction[0] == 0:
+            direction = (1, 0)
+
+
+# Initialize and run the game
+def main():
+    glut.glutInit(sys.argv)
+    glut.glutInitDisplayMode(glut.GLUT_RGBA | glut.GLUT_DOUBLE)
+    glut.glutInitWindowSize(500, 500)
+    glut.glutInitWindowPosition(400, 80)
+    glut.glutCreateWindow(b"Snake Game")
+
+    gl.glClearColor(0, 0, 0, 1)
+    gl.glMatrixMode(gl.GL_PROJECTION)
+    gl.glLoadIdentity()
+    gl.glOrtho(0, 500, 0, 500, -1, 1)
+
+    glut.glutDisplayFunc(display)
+    glut.glutSpecialFunc(arrow_keys)
+    glut.glutKeyboardFunc(keyboard)
+    glut.glutTimerFunc(200, update, 0)
+
+    glut.glutMainLoop()
+
+
+if __name__ == "__main__":
+    main()
