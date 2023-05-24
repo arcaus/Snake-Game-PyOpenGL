@@ -3,14 +3,14 @@
 The requirements were that we could not use any other library such as PyGame to complete this project.
 It had to be done entirely using PyOpenGL and the included OpenGL libraries.
 
-### Instructions to Run the game
-1. Create a python Project in virtual environment (venv) (use PyCharm for less hassle)
+### Instructions to Run the game:
+1. Create a python Project in virtual environment (venv) (use PyCharm for less hassle) <br>
 
-2. Install necessary libraries inside of the virtual environment
-     i. Open terminal inside the virtual environment
-    ii. Check Python version using command: py -V
-   iii. Download and install the same version of PyOpenGL and PyOpenGL_Accelerate
+2. Install necessary libraries inside of the virtual environment <br>
+     i. Open terminal inside the virtual environment <br>
+    ii. Check Python version using command: py -V <br>
+   iii. Download and install the same version of PyOpenGL and PyOpenGL_Accelerate <br>
 
-3. Dodnload the snake.py script in the same folder.
+3. Dodnload the snake.py script in the same folder. <br>
 
 4. Now you can run the game!
