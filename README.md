@@ -11,6 +11,6 @@ It had to be done entirely using PyOpenGL and the included OpenGL libraries.
     ii. Check Python version using command: py -V <br>
    iii. Download and install the same version of PyOpenGL and PyOpenGL_Accelerate <br>
 
-3. Dodnload the snake.py script in the same folder. <br>
+3. Download the snake.py script in the same folder. <br>
 
 4. Now you can run the game!
