@@ -1,7 +1,5 @@
 # Snake Game using OpenGL
 
-![Snake Game](snake_game_screenshot.png)
-
 This project is an implementation of the classic Snake Game using only the OpenGL library. It was developed as part of the BracU CSE423 lab projects for Spring 2023. The unique requirement for this project was to create the game solely using PyOpenGL and the included OpenGL libraries, without utilizing any other libraries like PyGame.
 
 ## Instructions to Run the Game
