@@ -14,7 +14,7 @@ To run the Snake Game on your system, follow these steps:
      ```bash
      py -V
      ```
-   - Visit the following link to download the required Python Extension Packages for Windows by Christoph Gohlke: [Python Extension Packages for Windows - Christoph Gohlke](https://www.lfd.uci.edu/~gohlke/pythonlibs/#_pyopengl:~:text=PyOpenGL%E2%80%913.1.5%E2%80%91cp36%E2%80%91cp36m%E2%80%91win_amd64.wh)
+   - Visit the following link to download the required [Python Extension Packages for Windows - Christoph Gohlke (Click here)](https://www.lfd.uci.edu/~gohlke/pythonlibs/#_pyopengl:~:text=PyOpenGL%E2%80%913.1.5%E2%80%91cp36%E2%80%91cp36m%E2%80%91win_amd64.wh)
    - Download the following files from the website:
      ```bash
      PyOpenGL‑3.1.6‑cp3x‑cp3x‑win_amd64.whl
@@ -44,17 +44,11 @@ To run the Snake Game on your system, follow these steps:
 
 ## How to Play
 
-- Use the arrow keys (up, down, left, right) to control the snake's movement.
-- The objective is to eat the food (represented by the red squares) to grow longer.
-- Avoid hitting the boundaries or colliding with your own body, as it will result in game over.
+- Use the arrow keys (up, down, left, right) or the keyboard keys (W, A, S, D) to control the snake's movement.
+- The objective is to eat the food (represented by squares blocks and circles) to grow longer.
+- Avoid colliding with your own body, as it will result in game over.
 
 Enjoy the classic Snake Game experience brought to you through the power of OpenGL!
-
-## Acknowledgments
-
-Special thanks to the BracU CSE423 course and its instructors for providing the opportunity to work on this project and learn more about PyOpenGL and OpenGL programming.
-
-Feel free to explore, modify, and have fun with the Snake Game. Contributions and enhancements to the project are welcome!
 
 ## License
 
