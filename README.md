@@ -49,7 +49,7 @@ To run the Snake Game on your system, follow these steps:
 - The objective is to eat the food (represented by squares blocks and circles) to grow longer.
 - Avoid colliding with your own body, as it will result in game over.
 
-Enjoy the classic Snake Game experience brought to you through the power of OpenGL!
+Enjoy the classic Snake Game experience brought to you through the power of OpenGL! GG ! Enjoy the OG game!!
 
 ## License
 
